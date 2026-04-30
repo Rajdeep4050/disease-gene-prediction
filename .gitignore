@@ -1,0 +1,55 @@
+# =========================
+# Python
+# =========================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyc.*
+*.egg-info/
+dist/
+build/
+
+# =========================
+# Virtual Environment
+# =========================
+venv/
+.env/
+
+# =========================
+# Data (STRICT)
+# =========================
+# Ignore all data
+data/*
+
+# BUT allow this specific script
+!data/download_opentargets.py
+# =========================
+# Large Files Safety
+# =========================
+*.parquet
+*.gz
+*.zip
+*.csv
+*.txt
+
+# =========================
+# Jupyter
+# =========================
+.ipynb_checkpoints/
+
+# =========================
+# Logs
+# =========================
+*.log
+
+# =========================
+# VS Code
+# =========================
+.vscode/
+
+# =========================
+# OS Files
+# =========================
+.DS_Store
+Thumbs.db

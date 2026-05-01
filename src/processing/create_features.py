@@ -85,3 +85,61 @@ def add_neighbor_disease_ratio(df: pd.DataFrame) -> pd.DataFrame:
     ).fillna(0)
 
     return df
+
+def add_common_neighbors(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Count number of common neighbors between gene1 and gene2.
+    """
+
+    from collections import defaultdict
+
+    neighbors = defaultdict(set)
+
+    for _, row in df.iterrows():
+        neighbors[row["gene1"]].add(row["gene2"])
+        neighbors[row["gene2"]].add(row["gene1"])
+
+    common_counts = []
+
+    for _, row in df.iterrows():
+        g1 = row["gene1"]
+        g2 = row["gene2"]
+
+        common = neighbors[g1].intersection(neighbors[g2])
+        common_counts.append(len(common))
+
+    df["common_neighbors"] = common_counts
+
+    return df
+
+def add_jaccard_similarity(df):
+    """
+    Jaccard similarity between gene1 and gene2
+    """
+
+    from collections import defaultdict
+
+    neighbors = defaultdict(set)
+
+    for _, row in df.iterrows():
+        neighbors[row["gene1"]].add(row["gene2"])
+        neighbors[row["gene2"]].add(row["gene1"])
+
+    jaccard_scores = []
+
+    for _, row in df.iterrows():
+        g1 = row["gene1"]
+        g2 = row["gene2"]
+
+        n1 = neighbors[g1]
+        n2 = neighbors[g2]
+
+        intersection = len(n1 & n2)
+        union = len(n1 | n2)
+
+        score = intersection / union if union != 0 else 0
+        jaccard_scores.append(score)
+
+    df["jaccard_similarity"] = jaccard_scores
+
+    return df

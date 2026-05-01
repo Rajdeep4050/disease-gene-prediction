@@ -44,6 +44,8 @@ Predict disease-associated genes using biological interaction networks and seque
 ## Data Sources
 
 - STRING (protein interactions)
+  https://string-db.org/cgi/download?species_text=Homo+sapiens
+  https://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/
 - DisGeNET (disease-gene associations)
 - NCBI (gene sequences)
 

@@ -4,6 +4,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report
 from src.model.feature_importance import get_feature_importance
+from src.model.save_model import save_model
 
 def train_models(df: pd.DataFrame):
     """
@@ -65,5 +66,8 @@ def train_models(df: pd.DataFrame):
     # Feature Importance
     
     get_feature_importance(rf, features)
-    
+    save_model(rf)
+
     return lr, rf, features
+
+

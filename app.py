@@ -241,8 +241,11 @@ elif page == "Graph Construction":
 
     st.markdown("---")
 
-    # =========================
-    # 1. DEGREE DISTRIBUTION
+
+
+
+        # =========================
+    # 1. DEGREE DISTRIBUTION (FIXED)
     # =========================
     st.markdown("## 📊 Gene Connectivity Distribution")
 
@@ -252,36 +255,100 @@ elif page == "Graph Construction":
     degree_df = degree_counts.reset_index()
     degree_df.columns = ["Gene", "Degree"]
 
-    fig = px.histogram(
-        degree_df,
-        x="Degree",
-        nbins=50,
-        title="Distribution of Gene Connectivity",
-        color_discrete_sequence=["#4C78A8"]
+    # -------------------------
+    # VIEW OPTIONS
+    # -------------------------
+    view_mode = st.radio(
+        "Select View",
+        ["Full (Log Scale)", "Zoomed (0-200)", "Percentile View"]
     )
 
-    fig.update_layout(
-        template="plotly_white",
-        xaxis_title="Number of Connections (Degree)",
-        yaxis_title="Number of Genes"
-    )
+    # -------------------------
+    # FULL VIEW (LOG SCALE)
+    # -------------------------
+    if view_mode == "Full (Log Scale)":
 
-    fig.update_traces(
-        hovertemplate="Degree: %{x}<br>Count: %{y}"
-    )
+        fig = px.histogram(
+            degree_df,
+            x="Degree",
+            nbins=50,
+            title="Degree Distribution (Log Scale)",
+            color_discrete_sequence=["#4C78A8"]
+        )
 
-    st.plotly_chart(fig, use_container_width=True)
+        fig.update_layout(
+            template="plotly_dark",
+            xaxis_title="Degree",
+            yaxis_title="Number of Genes"
+        )
 
-    st.markdown("""
-    ### 🧠 Insight
+        fig.update_yaxes(type="log")  # 🔥 KEY FIX
 
-    - Most genes have **few connections**
-    - A small number of genes have **many connections (hub genes)**
+        st.plotly_chart(fig, use_container_width=True)
 
-    👉 This is a common pattern in real-world networks.
-    """)
+        st.markdown("""
+        👉 Log scale reveals the hidden structure of the network  
+        👉 Shows both low-degree and high-degree genes clearly  
+        """)
 
-    st.markdown("---")
+    # -------------------------
+    # ZOOMED VIEW (INTERPRETABLE)
+    # -------------------------
+    elif view_mode == "Zoomed (0-200)":
+
+        filtered_df = degree_df[degree_df["Degree"] <= 200]
+
+        fig = px.histogram(
+            filtered_df,
+            x="Degree",
+            nbins=40,
+            title="Degree Distribution (Zoomed: 0–200)",
+            color_discrete_sequence=["#4C78A8"]
+        )
+
+        fig.update_layout(
+            template="plotly_dark",
+            xaxis_title="Degree",
+            yaxis_title="Number of Genes"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown("""
+        👉 Most genes lie in this range  
+        👉 This is where the model learns most patterns  
+        """)
+
+    # -------------------------
+    # PERCENTILE VIEW (BEST UX)
+    # -------------------------
+    else:
+
+        percentiles = degree_df["Degree"].quantile([0.5, 0.75, 0.9, 0.99])
+
+        st.write("### 📊 Degree Percentiles")
+        st.dataframe(percentiles)
+
+        fig = px.box(
+            degree_df,
+            y="Degree",
+            title="Degree Distribution (Box Plot)",
+            color_discrete_sequence=["#F58518"]
+        )
+
+        fig.update_layout(
+            template="plotly_dark",
+            yaxis_title="Degree"
+        )
+
+        st.plotly_chart(fig, use_container_width=True)
+
+        st.markdown("""
+        👉 Shows how skewed the distribution is  
+        👉 Highlights extreme hub genes  
+        """)
+
+
 
     # =========================
     # 2. TOP HUB GENES

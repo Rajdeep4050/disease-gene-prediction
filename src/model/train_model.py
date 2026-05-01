@@ -13,7 +13,6 @@ def train_models(df: pd.DataFrame):
 
     # 🎯 Select features
     features = [
-        "combined_score",
         "degree_gene1",
         "degree_gene2",
         "common_neighbors",
@@ -52,7 +51,7 @@ def train_models(df: pd.DataFrame):
     print("\n===== Random Forest =====")
 
     rf = RandomForestClassifier(
-        n_estimators=200,
+        n_estimators=100,
         max_depth=10,
         class_weight="balanced",
         random_state=42

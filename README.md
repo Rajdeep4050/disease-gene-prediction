@@ -1,242 +1,207 @@
 # Disease-Gene Prediction
 
-A machine learning project for predicting disease-gene associations.
+A modular pipeline that builds a labeled disease-gene interaction dataset from STRING and Open Targets data.
 
-## Project Structure
+## Project overview
+
+This repository prepares a graph-style dataset for disease gene prediction. It loads raw biological data, aligns protein and gene identifiers, constructs gene interaction edges, attaches disease labels, and produces labeled edges for downstream modeling.
+
+Key capabilities:
+
+- Load STRING protein-protein interactions
+- Map STRING proteins to Ensembl gene IDs
+- Load sampled Open Targets gene-disease association data
+- Generate binary disease labels at the gene level
+- Merge labels with graph edges
+- Create edge-level labels for model training
+- Train baseline models using graph-derived features
+
+## Actual repository structure
 
 ```
 disease-gene-prediction/
-│
 ├── data/
-│   ├── raw/                      # Raw input data
-│   ├── processed/                # Processed and cleaned data
-│   └── download_opentargets.py  # Script to download data sources
-│
-├── src/
-│   ├── ingestion/
-│   │   ├── __init__.py
-│   │   ├── load_string.py        # Load STRING interaction data
-│   │   └── load_disgenet.py      # Load DisGeNET disease-gene associations
-│   │
-│   ├── processing/
-│   │   ├── __init__.py
-│   │   └── create_labels.py      # Create labels from disease-gene associations
-│   │
-│   ├── config/
-│   │   ├── __init__.py
-│   │   ├── paths.py              # Centralized path configuration
-│   │   └── constants.py          # Project constants and thresholds
-│   │
-│   ├── __init__.py
-│   └── main.py                   # Main pipeline orchestration
-│
-├── tests/                        # Unit tests for project modules
-├── notebooks/                    # Jupyter notebooks for exploration
-├── README.md
+│   ├── raw/
+│   │   ├── 9606.protein.aliases.v12.0.txt
+│   │   ├── 9606.protein.links.v12.0.txt
+│   │   ├── opentargets/              # sampled Open Targets parquet files
+│   │   └── __pycache__/
+│   ├── processed/
+│   └── download_opentargets.py
+├── models/
+│   ├── feature_importance.py
+│   ├── save_model.py
+│   ├── train_model.py
+│   └── __pycache__/
 ├── requirements.txt
-└── .gitignore
+├── src/
+│   ├── config/
+│   │   ├── constants.py
+│   │   └── paths.py
+│   ├── ingestion/
+│   │   ├── load_opentargets.py
+│   │   └── load_string.py
+│   ├── model/
+│   │   ├── feature_importance.py
+│   │   ├── save_model.py
+│   │   └── train_model.py
+│   ├── processing/
+│   │   ├── create_edge_labels.py
+│   │   ├── create_features.py
+│   │   ├── create_labels.py
+│   │   ├── create_mapping.py
+│   │   ├── map_string_to_gene.py
+│   │   └── merge_graph_labels.py
+│   ├── __init__.py
+│   └── main.py
+├── tests/
+│   ├── test_load.py
+│   ├── test_mapping.py
+│   ├── test_model.py
+│   └── __init__.py
+├── README.md
+├── Reference.md
+├── .gitignore
+└── venv/
 ```
 
-## Problem
+## Data sources
 
-Predict disease-associated genes using biological interaction networks and sequence-based features.
+### STRING
 
-## Data Sources
+https://stringdb-downloads.org/download/protein.links.v12.0/9606.protein.links.v12.0.txt.gz
+https://stringdb-downloads.org/download/protein.aliases.v12.0/9606.protein.aliases.v12.0.txt.gz
 
-- STRING (protein interactions)
-  https://string-db.org/cgi/download?species_text=Homo+sapiens
-  https://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/
-- DisGeNET (disease-gene associations)
-- NCBI (gene sequences)
+https://ftp.ebi.ac.uk/pub/databases/opentargets/platform/26.03/
 
-## Approach
+- Protein-protein interactions for Homo sapiens
+- Expected raw file: `data/raw/9606.protein.links.v12.0.txt`
+- Filtered by `combined_score` using `src.config.constants.STRING_SCORE_THRESHOLD`
 
-Combine graph-based relationships with sequence-derived features to identify potential disease genes.
+### Open Targets
 
-# Disease Gene Prediction using Graph-Based Learning
+- Gene-disease association dataset stored as parquet files
+- Raw folder: `data/raw/opentargets/`
+- Sampled using `src.ingestion.load_opentargets.load_opentargets_data`
+- Filtered by `associationScore` using `src.config.constants.OPENTARGETS_SCORE_THRESHOLD`
 
-## Overview
+## Core pipeline
 
-This project aims to build a machine learning system that predicts whether a gene is associated with human diseases. The system integrates biological interaction data with engineered features derived from gene sequences and applies graph-based machine learning models to identify potential disease-related genes.
+### 1. Load raw data
 
-The goal is to assist in narrowing down candidate genes for further biological validation, reducing the need for exhaustive laboratory experiments.
+- STRING: `src.ingestion.load_string.load_string_data`
+- Open Targets: `src.ingestion.load_opentargets.load_opentargets_data`
 
----
+### 2. Create gene labels
 
-## Problem Statement
+- `src.processing.create_labels.create_gene_labels`
+- Converts Open Targets `targetId` values into disease gene labels
+- Produces `gene_id` / `label` pairs where `label = 1`
 
-Given a large set of genes and their interactions, along with known disease-associated genes, we aim to:
+### 3. Map STRING proteins to genes
 
-- Identify patterns in gene interaction networks
-- Leverage simple sequence-derived features
-- Predict which previously unlabeled genes are likely to be disease-associated
+- `src.processing.create_mapping.create_protein_gene_mapping`
+- Reads `data/raw/9606.protein.aliases.v12.0.txt`
+- Keeps only Ensembl gene mappings
+- Produces a `protein_id -> gene_id` table
 
-This is formulated as a **binary classification problem at the gene level**.
+### 4. Convert protein edges to gene edges
 
----
+- `src.processing.map_string_to_gene.map_string_to_gene`
+- Joins protein interaction rows to gene IDs for both endpoints
+- Outputs `gene1`, `gene2`, `combined_score`
 
-## Key Idea
+### 5. Merge graph and labels
 
-The hypothesis behind this project is:
+- `src.processing.merge_graph_labels.merge_graph_with_labels`
+- Attaches `label_gene1` and `label_gene2` for each edge
+- Fills missing gene labels as `0`
+- Removes edges where both genes are non-disease
 
-- Genes that interact with disease-associated genes are more likely to be disease-associated
-- Genes with similar sequence characteristics to known disease genes may also share functional similarities
+### 6. Create edge labels
 
-By combining:
+- `src.processing.create_edge_labels.create_edge_labels`
+- Assigns `edge_label = 1` when both genes are disease-associated
+- Assigns `edge_label = 0` when exactly one gene is disease-associated
 
-1. **Graph structure (gene-gene interactions)**
-2. **Sequence-derived features (basic biological signals)**
+## Feature engineering
 
-we can improve prediction performance compared to using either source alone.
+The repository also includes graph-based feature generation in `src.processing.create_features.py`:
 
----
+- node degree for each gene endpoint
+- disease neighbor count and ratio
+- common neighbors
+- Jaccard similarity between gene neighborhoods
 
-## Data Sources
+## Modeling support
 
-This project integrates multiple publicly available biological datasets:
+Training utilities live under `src.model/`:
 
-### 1. Protein Interaction Data
+- `train_model.py` trains Logistic Regression and Random Forest models
+- `feature_importance.py` reports feature importance
+- `save_model.py` saves a trained model
 
-Source: STRING database
+## Outputs
 
-- Contains protein-protein interactions
-- Used to construct a graph where:
-  - Nodes = genes/proteins
-  - Edges = interactions with confidence scores
+The main pipeline saves processed artifacts to:
 
-### 2. Disease-Gene Associations
+- `data/processed/interactions.csv`
+- `data/processed/gene_labels.csv`
 
-Source: DisGeNET
+## How to run
 
-- Contains known associations between genes and diseases
-- Used to label genes as:
-  - 1 → disease-associated
-  - 0 → not known to be associated
+Install dependencies:
 
-### 3. Gene Sequence Data
+```bash
+pip install -r requirements.txt
+```
 
-Source: NCBI
+Run the main data pipeline:
 
-- Contains DNA/protein sequences
-- Used to derive features such as:
-  - GC content
-  - Sequence length
-  - k-mer frequencies
+```bash
+python -m src.main
+```
 
----
+Train models manually from the model script if needed:
 
-## Data Pipeline
+```bash
+python -m src.model.train_model
+```
 
-The data processing pipeline follows these steps:
+## Testing
 
-1. Load raw datasets from different sources
-2. Filter based on confidence thresholds:
-   - STRING interaction score threshold
-   - DisGeNET association score threshold
+Run tests with:
 
-3. Normalize and align gene identifiers across datasets
-4. Construct:
-   - Interaction dataset (edges)
-   - Gene label dataset
+```bash
+python -m pytest
+```
 
-5. Generate feature vectors for each gene
-6. Save processed datasets for modeling
+or if you prefer direct module execution:
 
----
+```bash
+python -m tests.test_mapping
+python -m tests.test_load
+python -m tests.test_model
+```
 
-## Feature Engineering
+## Notes
 
-Instead of using heavy biological models, we extract simple and interpretable features:
+- The current pipeline keeps only edges with at least one disease-related gene.
+- `edge_label = 1` denotes a strong disease-disease interaction.
+- `edge_label = 0` denotes a mixed edge with one disease gene and one non-disease gene.
 
-- Sequence length
-- GC content (proportion of G and C nucleotides)
-- k-mer frequencies (subsequence patterns)
+## Dependencies
 
-These features act as lightweight biological signals.
+- pandas
+- numpy
+- scikit-learn
+- pyarrow
+- requests
+- beautifulsoup4
 
----
+## Suggested next steps
 
-## Modeling Approach
-
-The project includes multiple models for comparison:
-
-### Baseline Models
-
-- XGBoost / Logistic Regression using only sequence features
-
-### Graph-Based Models
-
-- Node2Vec (embedding-based approach)
-- Graph Neural Network (GraphSAGE)
-
-The final model uses:
-
-- Graph structure (interaction network)
-- Node features (sequence-derived features)
-
----
-
-## Evaluation Strategy
-
-Models are evaluated using:
-
-- ROC-AUC
-- Precision / Recall
-- Comparison across:
-  - Feature-only models
-  - Graph-only models
-  - Combined models
-
----
-
-## Project Structure
-
-The project follows a modular pipeline:
-
-- ingestion: loading raw datasets
-- processing: cleaning and label creation
-- config: centralized constants and paths
-- main pipeline orchestration
-
-This structure ensures reproducibility and scalability.
-
----
-
-## Engineering Principles
-
-- Modular code design
-- Separation of concerns (data, processing, modeling)
-- Config-driven thresholds and paths
-- Reproducible pipelines
-- Version control using GitHub
-
----
-
-## Expected Outcome
-
-The system should:
-
-- Identify candidate disease genes
-- Demonstrate improvement using combined graph + feature approach
-- Provide a reproducible pipeline for future experimentation
-
----
-
-## Future Extensions
-
-- Add explainability (feature importance, attention)
-- Improve feature engineering
-- Incorporate additional biological datasets
-- Extend to link prediction (gene-disease pairs)
-
----
-
-## Summary (Simple Explanation)
-
-This project builds a system that:
-
-- Looks at how genes interact
-- Analyzes simple patterns in their sequences
-- Predicts which genes are likely linked to diseases
-
-The goal is to assist biological research with data-driven insights.
+- add integration tests for the full pipeline
+- extend label coverage beyond Open Targets sampling
+- build a dedicated model evaluation script
+- add visualization notebooks for network analysis

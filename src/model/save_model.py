@@ -2,7 +2,7 @@ import joblib
 import os
 
 
-def save_model(model, path="models/random_forest.pkl"):
+def save_model(model, path="models/model.pkl"):
     """
     Save trained model to disk.
     """

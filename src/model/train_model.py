@@ -182,14 +182,14 @@ def train_models(df: pd.DataFrame):
 
     return best_model, best_features, best_model_name, X_test_best, y_test_best
 
-def hub_bias_analysis(model, df, features, model_name="RF"):
+def hub_bias_analysis(best_model, df, best_features, best_model_name, best_threshold):
 
     print("\n===== HUB BIAS ANALYSIS =====")
 
-    X = df[features]
+    X = df[best_features]
     y = df["edge_label"]
 
-    preds = model.predict(X)
+    preds = predict_with_threshold(best_model, X, best_threshold)
 
     df_copy = df.copy()
     df_copy["prediction"] = preds
@@ -222,7 +222,7 @@ def hub_bias_analysis(model, df, features, model_name="RF"):
             recall=report["1"]["recall"],
             f1=report["1"]["f1-score"],
             samples=len(subset),
-            model_name=model_name
+            model_name=best_model_name
         )
 
 
@@ -254,6 +254,10 @@ def find_best_threshold(model, X_test, y_test):
 
     return best_threshold, best_f1
 
+def predict_with_threshold(model, X, threshold):
+    probs = model.predict_proba(X)[:, 1]
+    return (probs >= threshold).astype(int)
+
 if __name__ == "__main__":
 
     print("===== LOADING DATA =====")
@@ -261,11 +265,10 @@ if __name__ == "__main__":
     df = pd.read_csv("data/processed/final_dataset.csv")
 
     best_model, best_features, best_model_name, X_test, y_test = train_models(df)
-
-    hub_bias_analysis(best_model, df, best_features, best_model_name)
-
+    
     best_threshold, best_f1 = find_best_threshold(best_model, X_test, y_test)
 
+    hub_bias_analysis(best_model, df, best_features, best_model_name, best_threshold)
 
     # ======================
     # 🚀 XGBOOST TUNING (FINAL STEP)
@@ -277,13 +280,9 @@ if __name__ == "__main__":
     X = df[best_features]
     y = df["edge_label"]
 
-    from sklearn.model_selection import train_test_split
     X_train, X_test_xgb, y_train, y_test_xgb = train_test_split(
         X, y, test_size=0.2, random_state=42, stratify=y
     )
-
-    from sklearn.model_selection import RandomizedSearchCV
-    from xgboost import XGBClassifier
 
     xgb = XGBClassifier(
         objective="binary:logistic",
@@ -325,6 +324,7 @@ if __name__ == "__main__":
     best_threshold_xgb, best_f1_xgb = find_best_threshold(
         tuned_xgb, X_test_xgb, y_test_xgb
     )
+    final_threshold = best_threshold_xgb
 
     print("\n===== FINAL COMPARISON =====")
     print(f"RF (threshold) → F1: {best_f1:.3f}")

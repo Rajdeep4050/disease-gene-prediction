@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import joblib
 
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
@@ -324,8 +325,14 @@ if __name__ == "__main__":
     best_threshold_xgb, best_f1_xgb = find_best_threshold(
         tuned_xgb, X_test_xgb, y_test_xgb
     )
+
     final_threshold = best_threshold_xgb
 
+    joblib.dump({
+        "model": tuned_xgb,
+        "threshold": best_threshold_xgb
+    }, "models/xgb_with_threshold.pkl")
+    
     print("\n===== FINAL COMPARISON =====")
     print(f"RF (threshold) → F1: {best_f1:.3f}")
     print(f"XGB (threshold) → F1: {best_f1_xgb:.3f}")

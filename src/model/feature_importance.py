@@ -17,7 +17,7 @@ def get_feature_importance(model, feature_names):
         "importance": importances
     }).sort_values(by="importance", ascending=False)
 
-    print("\n===== FEATURE IMPORTANCE (Random Forest) =====")
+    print("\n===== FEATURE IMPORTANCE =====")
     print(importance_df)
 
     return importance_df

@@ -1,0 +1,80 @@
+timestamp,experiment,features,precision,recall,f1_score,notes
+2026-05-04 20:36:35,full_model_LR,"degree_gene1, degree_gene2, common_neighbors, jaccard_similarity",0.7712031558185405,0.3615014792899408,0.492257333501196,Logistic Regression
+2026-05-04 20:36:48,full_model_RF,"degree_gene1, degree_gene2, common_neighbors, jaccard_similarity",0.4896888782930027,0.7596153846153846,0.5954917735739653,Random Forest
+2026-05-04 20:36:48,only_degree_LR,"degree_gene1, degree_gene2",0.4131455399061033,0.0488165680473372,0.0873160244749462,Logistic Regression
+2026-05-04 20:36:55,only_degree_RF,"degree_gene1, degree_gene2",0.4415726645493374,0.7455621301775148,0.5546461242176216,Random Forest
+2026-05-04 20:36:56,only_common_neighbors_LR,common_neighbors,0.766402005850397,0.3391272189349112,0.4701961287014485,Logistic Regression
+2026-05-04 20:36:59,only_common_neighbors_RF,common_neighbors,0.4167048054919908,0.6734467455621301,0.5148430873621713,Random Forest
+2026-05-04 20:36:59,only_jaccard_LR,jaccard_similarity,0.6855600539811066,0.1878698224852071,0.2949201741654572,Logistic Regression
+2026-05-04 20:37:12,only_jaccard_RF,jaccard_similarity,0.3294095310423391,0.6416420118343196,0.435328064232844,Random Forest
+2026-05-04 20:37:12,no_degree_LR,"common_neighbors, jaccard_similarity",0.7731462925851703,0.3566937869822485,0.4881690497279514,Logistic Regression
+2026-05-04 20:37:20,no_degree_RF,"common_neighbors, jaccard_similarity",0.4538568362580482,0.6647559171597633,0.5394253132267988,Random Forest
+2026-05-04 20:56:48,full_model_LR,"degree_gene1, degree_gene2, common_neighbors, jaccard_similarity",0.7712031558185405,0.3615014792899408,0.492257333501196,Logistic Regression
+2026-05-04 20:57:02,full_model_RF,"degree_gene1, degree_gene2, common_neighbors, jaccard_similarity",0.4896888782930027,0.7596153846153846,0.5954917735739653,Random Forest
+2026-05-04 20:57:02,only_degree_LR,"degree_gene1, degree_gene2",0.4131455399061033,0.0488165680473372,0.0873160244749462,Logistic Regression
+2026-05-04 20:57:10,only_degree_RF,"degree_gene1, degree_gene2",0.4415726645493374,0.7455621301775148,0.5546461242176216,Random Forest
+2026-05-04 20:57:10,only_common_neighbors_LR,common_neighbors,0.766402005850397,0.3391272189349112,0.4701961287014485,Logistic Regression
+2026-05-04 20:57:14,only_common_neighbors_RF,common_neighbors,0.4167048054919908,0.6734467455621301,0.5148430873621713,Random Forest
+2026-05-04 20:57:14,only_jaccard_LR,jaccard_similarity,0.6855600539811066,0.1878698224852071,0.2949201741654572,Logistic Regression
+2026-05-04 20:57:27,only_jaccard_RF,jaccard_similarity,0.3294095310423391,0.6416420118343196,0.435328064232844,Random Forest
+2026-05-04 20:57:27,no_degree_LR,"common_neighbors, jaccard_similarity",0.7731462925851703,0.3566937869822485,0.4881690497279514,Logistic Regression
+2026-05-04 20:57:35,no_degree_RF,"common_neighbors, jaccard_similarity",0.4538568362580482,0.6647559171597633,0.5394253132267988,Random Forest
+2026-05-04 21:03:49,full_model_LR,"degree_gene1, degree_gene2, common_neighbors, jaccard_similarity",0.7712031558185405,0.3615014792899408,0.492257333501196,Logistic Regression
+2026-05-04 21:04:01,full_model_LR,"degree_gene1, degree_gene2, common_neighbors, jaccard_similarity",0.7712031558185405,0.3615014792899408,0.492257333501196,Logistic Regression
+2026-05-04 21:04:14,full_model_RF,"degree_gene1, degree_gene2, common_neighbors, jaccard_similarity",0.4896888782930027,0.7596153846153846,0.5954917735739653,Random Forest
+2026-05-04 21:04:15,only_degree_LR,"degree_gene1, degree_gene2",0.4131455399061033,0.0488165680473372,0.0873160244749462,Logistic Regression
+2026-05-04 21:04:22,only_degree_RF,"degree_gene1, degree_gene2",0.4415726645493374,0.7455621301775148,0.5546461242176216,Random Forest
+2026-05-04 21:04:22,only_common_neighbors_LR,common_neighbors,0.766402005850397,0.3391272189349112,0.4701961287014485,Logistic Regression
+2026-05-04 21:04:26,only_common_neighbors_RF,common_neighbors,0.4167048054919908,0.6734467455621301,0.5148430873621713,Random Forest
+2026-05-04 21:04:26,only_jaccard_LR,jaccard_similarity,0.6855600539811066,0.1878698224852071,0.2949201741654572,Logistic Regression
+2026-05-04 21:04:38,only_jaccard_RF,jaccard_similarity,0.3294095310423391,0.6416420118343196,0.435328064232844,Random Forest
+2026-05-04 21:04:39,no_degree_LR,"common_neighbors, jaccard_similarity",0.7731462925851703,0.3566937869822485,0.4881690497279514,Logistic Regression
+2026-05-04 21:04:46,no_degree_RF,"common_neighbors, jaccard_similarity",0.4538568362580482,0.6647559171597633,0.5394253132267988,Random Forest
+2026-05-04 21:18:34,no_degree_LR,"common_neighbors, jaccard_similarity",0.7731462925851703,0.3566937869822485,0.4881690497279514,Logistic Regression
+2026-05-04 21:18:52,no_degree_RF,"common_neighbors, jaccard_similarity",0.4538568362580482,0.6647559171597633,0.5394253132267988,Random Forest
+2026-05-04 21:18:53,only_degree_LR,"degree_gene1, degree_gene2",0.4131455399061033,0.0488165680473372,0.0873160244749462,Logistic Regression
+2026-05-04 21:19:10,only_degree_RF,"degree_gene1, degree_gene2",0.4415726645493374,0.7455621301775148,0.5546461242176216,Random Forest
+2026-05-04 21:19:10,only_log_degree_LR,"log_degree_gene1, log_degree_gene2",0.7397812320092113,0.2376109467455621,0.3596920923722883,Logistic Regression
+2026-05-04 21:19:27,only_log_degree_RF,"log_degree_gene1, log_degree_gene2",0.4414148050810337,0.7453772189349113,0.5544704264099037,Random Forest
+2026-05-04 21:19:28,full_with_log_degree_LR,"log_degree_gene1, log_degree_gene2, common_neighbors, jaccard_similarity",0.7656304575619979,0.4053254437869822,0.5300447346149196,Logistic Regression
+2026-05-04 21:19:54,full_with_log_degree_RF,"log_degree_gene1, log_degree_gene2, common_neighbors, jaccard_similarity",0.489922480620155,0.7596153846153846,0.5956644674835061,Random Forest
+2026-05-04 21:19:55,only_common_neighbors_LR,common_neighbors,0.766402005850397,0.3391272189349112,0.4701961287014485,Logistic Regression
+2026-05-04 21:20:02,only_common_neighbors_RF,common_neighbors,0.4167048054919908,0.6734467455621301,0.5148430873621713,Random Forest
+2026-05-04 21:20:03,only_jaccard_LR,jaccard_similarity,0.6855600539811066,0.1878698224852071,0.2949201741654572,Logistic Regression
+2026-05-04 21:20:32,only_jaccard_RF,jaccard_similarity,0.3294095310423391,0.6416420118343196,0.435328064232844,Random Forest
+2026-05-04 21:32:18,no_degree_LR,"common_neighbors, jaccard_similarity",0.7731462925851703,0.3566937869822485,0.4881690497279514,Logistic Regression
+2026-05-04 21:32:38,no_degree_RF,"common_neighbors, jaccard_similarity",0.4538568362580482,0.6647559171597633,0.5394253132267988,Random Forest
+2026-05-04 21:32:41,no_degree_XGB,"common_neighbors, jaccard_similarity",0.391840115978047,0.6997041420118343,0.5023564553601062,XGBoost
+2026-05-04 21:32:41,only_degree_LR,"degree_gene1, degree_gene2",0.4131455399061033,0.0488165680473372,0.0873160244749462,Logistic Regression
+2026-05-04 21:33:00,only_degree_RF,"degree_gene1, degree_gene2",0.4415726645493374,0.7455621301775148,0.5546461242176216,Random Forest
+2026-05-04 21:33:02,only_degree_XGB,"degree_gene1, degree_gene2",0.3497602766643087,0.8228550295857988,0.4908719872042358,XGBoost
+2026-05-04 21:33:03,only_log_degree_LR,"log_degree_gene1, log_degree_gene2",0.7397812320092113,0.2376109467455621,0.3596920923722883,Logistic Regression
+2026-05-04 21:33:21,only_log_degree_RF,"log_degree_gene1, log_degree_gene2",0.4414148050810337,0.7453772189349113,0.5544704264099037,Random Forest
+2026-05-04 21:33:24,only_log_degree_XGB,"log_degree_gene1, log_degree_gene2",0.3497602766643087,0.8228550295857988,0.4908719872042358,XGBoost
+2026-05-04 21:33:25,full_with_log_degree_LR,"log_degree_gene1, log_degree_gene2, common_neighbors, jaccard_similarity",0.7656304575619979,0.4053254437869822,0.5300447346149196,Logistic Regression
+2026-05-04 21:33:51,full_with_log_degree_RF,"log_degree_gene1, log_degree_gene2, common_neighbors, jaccard_similarity",0.489922480620155,0.7596153846153846,0.5956644674835061,Random Forest
+2026-05-04 21:33:53,full_with_log_degree_XGB,"log_degree_gene1, log_degree_gene2, common_neighbors, jaccard_similarity",0.4659960638530505,0.7880917159763313,0.5856809124639274,XGBoost
+2026-05-04 21:33:53,only_common_neighbors_LR,common_neighbors,0.766402005850397,0.3391272189349112,0.4701961287014485,Logistic Regression
+2026-05-04 21:34:00,only_common_neighbors_RF,common_neighbors,0.4167048054919908,0.6734467455621301,0.5148430873621713,Random Forest
+2026-05-04 21:34:02,only_common_neighbors_XGB,common_neighbors,0.3865853658536585,0.7034023668639053,0.4989506820566631,XGBoost
+2026-05-04 21:34:02,only_jaccard_LR,jaccard_similarity,0.6855600539811066,0.1878698224852071,0.2949201741654572,Logistic Regression
+2026-05-04 21:34:29,only_jaccard_RF,jaccard_similarity,0.3294095310423391,0.6416420118343196,0.435328064232844,Random Forest
+2026-05-04 21:34:31,only_jaccard_XGB,jaccard_similarity,0.2925037129680294,0.6919378698224852,0.4111861985605186,XGBoost
+2026-05-04 21:55:31,no_degree_LR,"common_neighbors, jaccard_similarity",0.7731462925851703,0.3566937869822485,0.4881690497279514,Logistic Regression
+2026-05-04 21:55:49,no_degree_RF,"common_neighbors, jaccard_similarity",0.4538568362580482,0.6647559171597633,0.5394253132267988,Random Forest
+2026-05-04 21:55:51,no_degree_XGB,"common_neighbors, jaccard_similarity",0.391840115978047,0.6997041420118343,0.5023564553601062,XGBoost
+2026-05-04 21:55:52,only_degree_LR,"degree_gene1, degree_gene2",0.4131455399061033,0.0488165680473372,0.0873160244749462,Logistic Regression
+2026-05-04 21:56:09,only_degree_RF,"degree_gene1, degree_gene2",0.4415726645493374,0.7455621301775148,0.5546461242176216,Random Forest
+2026-05-04 21:56:11,only_degree_XGB,"degree_gene1, degree_gene2",0.3497602766643087,0.8228550295857988,0.4908719872042358,XGBoost
+2026-05-04 21:56:12,only_log_degree_LR,"log_degree_gene1, log_degree_gene2",0.7397812320092113,0.2376109467455621,0.3596920923722883,Logistic Regression
+2026-05-04 21:56:29,only_log_degree_RF,"log_degree_gene1, log_degree_gene2",0.4414148050810337,0.7453772189349113,0.5544704264099037,Random Forest
+2026-05-04 21:56:31,only_log_degree_XGB,"log_degree_gene1, log_degree_gene2",0.3497602766643087,0.8228550295857988,0.4908719872042358,XGBoost
+2026-05-04 21:56:32,full_with_log_degree_LR,"log_degree_gene1, log_degree_gene2, common_neighbors, jaccard_similarity",0.7656304575619979,0.4053254437869822,0.5300447346149196,Logistic Regression
+2026-05-04 21:56:57,full_with_log_degree_RF,"log_degree_gene1, log_degree_gene2, common_neighbors, jaccard_similarity",0.489922480620155,0.7596153846153846,0.5956644674835061,Random Forest
+2026-05-04 21:56:59,full_with_log_degree_XGB,"log_degree_gene1, log_degree_gene2, common_neighbors, jaccard_similarity",0.4659960638530505,0.7880917159763313,0.5856809124639274,XGBoost
+2026-05-04 21:57:00,only_common_neighbors_LR,common_neighbors,0.766402005850397,0.3391272189349112,0.4701961287014485,Logistic Regression
+2026-05-04 21:57:07,only_common_neighbors_RF,common_neighbors,0.4167048054919908,0.6734467455621301,0.5148430873621713,Random Forest
+2026-05-04 21:57:08,only_common_neighbors_XGB,common_neighbors,0.3865853658536585,0.7034023668639053,0.4989506820566631,XGBoost
+2026-05-04 21:57:09,only_jaccard_LR,jaccard_similarity,0.6855600539811066,0.1878698224852071,0.2949201741654572,Logistic Regression
+2026-05-04 21:57:36,only_jaccard_RF,jaccard_similarity,0.3294095310423391,0.6416420118343196,0.435328064232844,Random Forest
+2026-05-04 21:57:38,only_jaccard_XGB,jaccard_similarity,0.2925037129680294,0.6919378698224852,0.41118619856051863,XGBoost

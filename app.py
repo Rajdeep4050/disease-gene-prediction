@@ -1,10 +1,12 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
 import joblib
 import matplotlib.pyplot as plt
 import networkx as nx
 import random
 import plotly.express as px
+import shap
 
 # =========================
 # CONFIG
@@ -22,11 +24,21 @@ def load_data():
     return pd.read_csv("data/processed/final_dataset.csv")
 
 @st.cache_resource
-def load_model():
-    return joblib.load("models/random_forest.pkl")
+def load_pipeline():
+    return joblib.load("models/xgb_with_threshold.pkl")
+
+pipeline = load_pipeline()
+
+model = pipeline["model"]
+THRESHOLD = pipeline["threshold"]
 
 df = load_data()
-model = load_model()
+
+@st.cache_resource
+def load_shap_explainer(_model):
+    return shap.TreeExplainer(model)
+
+explainer = load_shap_explainer(model)
 
 # =========================
 # BUILD GRAPH (FIXED POSITION)
@@ -66,6 +78,10 @@ def compute_features(g1, g2, G):
 
     return degree1, degree2, common, jaccard
 
+def predict_with_threshold(model, X, threshold):
+    probs = model.predict_proba(X)[:, 1]
+    preds = (probs >= threshold).astype(int)
+    return preds, probs
 
 # =========================
 # SIDEBAR NAVIGATION
@@ -957,29 +973,43 @@ elif page == "Prediction Playground":
         # Compute features
         degree1, degree2, common, jaccard = compute_features(gene1, gene2, G)
 
+
+        # =========================
+        # ENHANCED FEATURES
+        # =========================
+
+        log_degree_gene1 = np.log1p(degree1)
+        log_degree_gene2 = np.log1p(degree2)
+
+        degree_diff = abs(degree1 - degree2)
+        degree_sum = degree1 + degree2
+        preferential_attachment = degree1 * degree2
+
         # Create input
         X = pd.DataFrame([{
-            "degree_gene1": degree1,
-            "degree_gene2": degree2,
+            "log_degree_gene1": log_degree_gene1,
+            "log_degree_gene2": log_degree_gene2,
             "common_neighbors": common,
-            "jaccard_similarity": jaccard
+            "jaccard_similarity": jaccard,
+            "degree_diff": degree_diff,
+            "degree_sum": degree_sum,
+            "preferential_attachment": preferential_attachment
         }])
 
-        # Predict
-        prob = model.predict_proba(X)[0][1]
+        # =========================
+        # PREDICTION
+        # =========================
+
+        preds, probs = predict_with_threshold(
+            model,
+            X,
+            THRESHOLD
+        )
+
+        pred = preds[0]
+        prob = probs[0]
 
         st.write(f"🔍 Raw probability: {prob:.3f}")
-        
-        # 🔥 THRESHOLD LOGIC (IMPORTANT FIX)
-        threshold_strong = 0.90
-        threshold_moderate = 0.70
-
-        if prob >= threshold_strong:
-            pred = "strong"
-        elif prob >= threshold_moderate:
-            pred = "moderate"
-        else:
-            pred = "weak"
         prob_percent = prob * 100
 
         # =========================
@@ -987,14 +1017,11 @@ elif page == "Prediction Playground":
         # =========================
         prob_percent = prob * 100
 
-        if pred == "strong":
-            st.success(f"🟢 Strong disease-related interaction ({prob_percent:.1f}%)")
-
-        elif pred == "moderate":
-            st.warning(f"🟡 Moderate disease interaction ({prob_percent:.1f}%)")
-
+        if pred == 1:
+            st.success(f"🟢 Disease-related interaction ({prob_percent:.1f}%)")
         else:
             st.error(f"🔴 Weak or no disease relationship ({prob_percent:.1f}%)")
+
         # =========================
         # EXPLANATION
         # =========================
@@ -1036,3 +1063,55 @@ elif page == "Prediction Playground":
         st.markdown("### 📊 Confidence Level")
         st.progress(float(prob))
         st.write(f"Confidence: {prob * 100:.1f}%")
+
+        # =========================
+        # SHAP EXPLANATION
+        # =========================
+
+        st.markdown("## 🧠 SHAP Explanation")
+
+        shap_values = explainer.shap_values(X)
+
+        shap_df = pd.DataFrame({
+            "Feature": X.columns,
+            "Impact": shap_values[0]
+        })
+
+        shap_df = shap_df.sort_values(
+            by="Impact",
+            key=abs,
+            ascending=False
+        )
+
+        fig, ax = plt.subplots(figsize=(8, 4))
+
+        colors = [
+            "green" if x > 0 else "red"
+            for x in shap_df["Impact"]
+        ]
+
+        ax.barh(
+            shap_df["Feature"],
+            shap_df["Impact"],
+            color=colors
+        )
+
+        ax.set_title("Feature Contribution")
+        ax.set_xlabel("SHAP Impact")
+
+        ax.invert_yaxis()
+
+        st.pyplot(fig)
+
+        # =========================
+        # INTERPRETATION
+        # =========================
+
+        st.markdown("### 📖 Interpretation")
+
+        for _, row in shap_df.iterrows():
+
+            if row["Impact"] > 0:
+                st.write(f"✅ {row['Feature']} increased prediction")
+            else:
+                st.write(f"❌ {row['Feature']} decreased prediction")
